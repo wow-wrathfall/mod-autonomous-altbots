@@ -1,0 +1,16 @@
+# Build and IDE output
+build/
+.cache/
+.idea/
+.vscode/
+*.user
+*.suo
+
+# Generated active configuration
+conf/mod_autonomous_altbots.conf
+
+# Archives and local logs
+*.zip
+*.tar.gz
+*.log
+.validation-path

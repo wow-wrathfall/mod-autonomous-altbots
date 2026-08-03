@@ -1,0 +1,45 @@
+name: Bug report
+description: Report reproducible autonomous-alt behaviour or a build regression.
+title: "[Bug]: "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: Do not include credentials, database dumps, client files, or copyrighted game data.
+  - type: input
+    id: core_commit
+    attributes:
+      label: Playerbots AzerothCore commit
+      placeholder: Full commit SHA
+    validations:
+      required: true
+  - type: input
+    id: playerbots_commit
+    attributes:
+      label: mod-playerbots commit
+      placeholder: Full commit SHA
+    validations:
+      required: true
+  - type: dropdown
+    id: install
+    attributes:
+      label: Installation type
+      options: [Docker, Native Linux, Windows, macOS, Other]
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction steps
+      description: Include commands, expected result, actual result, and a minimal sanitized log excerpt.
+    validations:
+      required: true
+  - type: checkboxes
+    id: prerequisites
+    attributes:
+      label: Required settings
+      options:
+        - label: EnablePlayerSettings is set to 1.
+          required: true
+        - label: AiPlayerbot.DisabledWithoutRealPlayer is set to 0.
+          required: true

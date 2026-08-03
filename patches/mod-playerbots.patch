@@ -1,0 +1,78 @@
+diff --git a/src/Bot/PlayerbotAI.cpp b/src/Bot/PlayerbotAI.cpp
+index 5b68216..9a66b0c 100644
+--- a/src/Bot/PlayerbotAI.cpp
++++ b/src/Bot/PlayerbotAI.cpp
+@@ -60,6 +60,7 @@
+ 
+ constexpr uint32 SPELL_TITAN_GRIP = 49152;
+ constexpr uint32 SPELL_DK_FROST_PRESENCE = 48263;
++constexpr char AUTONOMOUS_ALT_SETTING_SOURCE[] = "mod_autonomous_altbots";
+ 
+ std::vector<std::string> PlayerbotAI::dispel_whitelist = {
+     "mutating injection",
+@@ -4608,6 +4609,11 @@ bool PlayerbotAI::AllowActive(ActivityType activityType)
+     if (activityType == PACKET_ACTIVITY)
+         return true;
+ 
++    // Characters explicitly enrolled by mod-autonomous-altbots must keep running their full AI even when
++    // no real player is nearby. The setting is persisted per character, so this also survives restarts.
++    if (bot->IsPlayerSettingEnabled(AUTONOMOUS_ALT_SETTING_SOURCE, 0))
++        return true;
++
+     // all bots forced active, no rotation or scaling needed
+     if (sPlayerbotAIConfig.botActiveAlone >= 100 && !sPlayerbotAIConfig.botActiveAloneSmartScale)
+         return true;
+diff --git a/src/Bot/RandomPlayerbotMgr.cpp b/src/Bot/RandomPlayerbotMgr.cpp
+index 6abae47..5ca37ac 100644
+--- a/src/Bot/RandomPlayerbotMgr.cpp
++++ b/src/Bot/RandomPlayerbotMgr.cpp
+@@ -58,6 +58,8 @@ struct GuidClassRaceInfo
+     uint32 rRace;
+ };
+ 
++constexpr char AUTONOMOUS_ALT_SETTING_SOURCE[] = "mod_autonomous_altbots";
++
+ void PrintStatsThread() { sRandomPlayerbotMgr.PrintStats(); }
+ 
+ void activatePrintStatsThread()
+@@ -2533,6 +2535,8 @@ void RandomPlayerbotMgr::OnPlayerLogout(Player* player)
+ 
+ void RandomPlayerbotMgr::OnBotLoginInternal(Player* const bot)
+ {
++    bool const isAutonomousAlt = bot->IsPlayerSettingEnabled(AUTONOMOUS_ALT_SETTING_SOURCE, 0);
++
+     if (_isBotLogging)
+     {
+         LOG_INFO("playerbots", "{}/{} Bot {} logged in", playerBots.size(),
+@@ -2545,13 +2549,13 @@ void RandomPlayerbotMgr::OnBotLoginInternal(Player* const bot)
+     }
+ 
+     // Run guild recovery/assignment at login to handle empty guild tables after restart.
+-    if (sPlayerbotAIConfig.randomBotGuildCount > 0)
++    if (!isAutonomousAlt && sPlayerbotAIConfig.randomBotGuildCount > 0)
+     {
+         PlayerbotFactory factory(bot, bot->GetLevel());
+         factory.InitGuild();
+     }
+ 
+-    if (sPlayerbotAIConfig.randomBotFixedLevel)
++    if (!isAutonomousAlt && sPlayerbotAIConfig.randomBotFixedLevel)
+     {
+         bot->SetPlayerFlag(PLAYER_FLAGS_NO_XP_GAIN);
+     }
+@@ -2641,13 +2645,14 @@ void RandomPlayerbotMgr::OnPlayerLogin(Player* player)
+         // player->Relocate(botPos.getX(), botPos.getY(), botPos.getZ(), botPos.getO());
+     }
+ 
++    bool const isAutonomousAlt = player->IsPlayerSettingEnabled(AUTONOMOUS_ALT_SETTING_SOURCE, 0);
+     if (IsRandomBot(player))
+     {
+         // ObjectGuid::LowType guid = player->GetGUID().GetCounter(); //not used, conditional could be rewritten for
+         // simplicity. line marked for removal.
+         player->SetPvP(sWorld->IsPvPRealm());
+     }
+-    else
++    else if (!isAutonomousAlt)
+     {
+         players.push_back(player);
+         LOG_DEBUG("playerbots", "Including non-random bot player {} into random bot update", player->GetName().c_str());

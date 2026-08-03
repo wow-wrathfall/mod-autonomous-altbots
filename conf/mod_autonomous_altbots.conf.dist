@@ -1,0 +1,27 @@
+[worldserver]
+
+# Requires:
+#   EnablePlayerSettings = 1
+#   AiPlayerbot.DisabledWithoutRealPlayer = 0
+# See README.md before enabling characters.
+
+# Enable persistent autonomous altbots.
+AutonomousAltBots.Enable = 1
+
+# Delay automatic logins after world startup so normal server initialization can settle.
+AutonomousAltBots.StartupDelaySeconds = 30
+
+# How often to retry offline bots and restore their autonomous strategies.
+AutonomousAltBots.CheckIntervalSeconds = 10
+
+# Strategy controls. These characters keep their normal class, quest, loot, gear, and progression data.
+AutonomousAltBots.Strategy.Quest = 1
+AutonomousAltBots.Strategy.Grind = 1
+AutonomousAltBots.Strategy.NewRpg = 1
+
+# When enabled, the bot remains independent instead of following a real-player master after login. Disable this if
+# autonomous alts should resume normal master/follow behaviour when grouped with a real player.
+AutonomousAltBots.Independent = 1
+
+# Log autonomous login and strategy activity to the worldserver log.
+AutonomousAltBots.VerboseLogging = 1

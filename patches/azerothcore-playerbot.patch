@@ -1,0 +1,54 @@
+diff --git a/src/server/database/Database/Implementation/CharacterDatabase.cpp b/src/server/database/Database/Implementation/CharacterDatabase.cpp
+index db66772..9d11aac 100644
+--- a/src/server/database/Database/Implementation/CharacterDatabase.cpp
++++ b/src/server/database/Database/Implementation/CharacterDatabase.cpp
+@@ -618,6 +618,7 @@ void CharacterDatabaseConnection::DoPrepareStatements()
+ 
+     // Character settings
+     PrepareStatement(CHAR_SEL_CHAR_SETTINGS, "SELECT source, data FROM character_settings WHERE guid = ?", CONNECTION_BOTH);
++    PrepareStatement(CHAR_SEL_CHAR_SETTINGS_BY_SOURCE, "SELECT guid, data FROM character_settings WHERE source = ?", CONNECTION_SYNCH);
+     PrepareStatement(CHAR_REP_CHAR_SETTINGS, "REPLACE INTO character_settings (guid, source, data) VALUES (?, ?, ?)", CONNECTION_ASYNC);
+     PrepareStatement(CHAR_DEL_CHAR_SETTINGS, "DELETE FROM character_settings WHERE guid = ?", CONNECTION_ASYNC);
+ 
+diff --git a/src/server/database/Database/Implementation/CharacterDatabase.h b/src/server/database/Database/Implementation/CharacterDatabase.h
+index 99fd558..c5ea60b 100644
+--- a/src/server/database/Database/Implementation/CharacterDatabase.h
++++ b/src/server/database/Database/Implementation/CharacterDatabase.h
+@@ -530,6 +530,7 @@ enum CharacterDatabaseStatements : uint32
+     CHAR_DEL_CHAT_FILTER_WORD,
+ 
+     CHAR_SEL_CHAR_SETTINGS,
++    CHAR_SEL_CHAR_SETTINGS_BY_SOURCE,
+     CHAR_REP_CHAR_SETTINGS,
+     CHAR_DEL_CHAR_SETTINGS,
+ 
+diff --git a/src/server/game/Entities/Player/Player.h b/src/server/game/Entities/Player/Player.h
+index 5eff429..f54d861 100644
+--- a/src/server/game/Entities/Player/Player.h
++++ b/src/server/game/Entities/Player/Player.h
+@@ -2672,6 +2672,7 @@ public:
+ 
+     // Settings
+     [[nodiscard]] PlayerSetting GetPlayerSetting(std::string const& source, uint32 index);
++    [[nodiscard]] bool IsPlayerSettingEnabled(std::string const& source, uint32 index, uint32 equals = 1) const;
+     void UpdatePlayerSetting(std::string const& source, uint32 index, uint32 value);
+ 
+     void SendSystemMessage(std::string_view msg, bool escapeCharacters = false);
+diff --git a/src/server/game/Entities/Player/PlayerSettings.cpp b/src/server/game/Entities/Player/PlayerSettings.cpp
+index f1eb863..8883566 100644
+--- a/src/server/game/Entities/Player/PlayerSettings.cpp
++++ b/src/server/game/Entities/Player/PlayerSettings.cpp
+@@ -141,6 +141,13 @@ PlayerSetting Player::GetPlayerSetting(std::string const& source, uint32 index)
+     return it->second[index];
+ }
+ 
++bool Player::IsPlayerSettingEnabled(std::string const& source, uint32 index, uint32 equals) const
++{
++    auto itr = m_charSettingsMap.find(source);
++    return itr != m_charSettingsMap.end() && static_cast<size_t>(index) < itr->second.size() &&
++           itr->second[index].IsEnabled(equals);
++}
++
+ void Player::_SavePlayerSettings(CharacterDatabaseTransaction trans)
+ {
+     if (!sWorld->getBoolConfig(CONFIG_PLAYER_SETTINGS_ENABLED))

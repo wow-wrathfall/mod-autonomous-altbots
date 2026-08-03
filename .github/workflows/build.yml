@@ -1,0 +1,85 @@
+name: build
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: autonomous-altbots-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CORE_REPO: mod-playerbots/azerothcore-wotlk
+  CORE_REF: Playerbot
+  PLAYERBOTS_REPO: mod-playerbots/mod-playerbots
+  PLAYERBOTS_REF: master
+  CCACHE_DIR: ${{ github.workspace }}/.ccache
+  CCACHE_BASEDIR: ${{ github.workspace }}
+  CCACHE_MAXSIZE: 2G
+
+jobs:
+  worldserver:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout Playerbots AzerothCore fork
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.CORE_REPO }}
+          ref: ${{ env.CORE_REF }}
+          path: .
+
+      - name: Checkout mod-playerbots
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.PLAYERBOTS_REPO }}
+          ref: ${{ env.PLAYERBOTS_REF }}
+          path: modules/mod-playerbots
+
+      - name: Checkout this module
+        uses: actions/checkout@v4
+        with:
+          path: modules/mod-autonomous-altbots
+
+      - name: Check and apply integration patches
+        run: |
+          bash modules/mod-autonomous-altbots/tools/install-patches.sh --check
+          bash modules/mod-autonomous-altbots/tools/install-patches.sh
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential ccache clang cmake make \
+            default-libmysqlclient-dev libssl-dev libbz2-dev libreadline-dev \
+            libncurses-dev libboost-all-dev zlib1g-dev liblzma-dev
+
+      - name: Restore compiler cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.CCACHE_DIR }}
+          key: autonomous-altbots-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            autonomous-altbots-${{ runner.os }}-
+
+      - name: Configure
+        env:
+          CC: clang
+          CXX: clang++
+        run: |
+          cmake -B build \
+            -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+            -DSCRIPTS=static \
+            -DMODULES=static \
+            -DTOOLS_BUILD=none \
+            -DAPPS_BUILD=worldserver \
+            -DCMAKE_C_COMPILER_LAUNCHER=ccache \
+            -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
+            -DWITH_WARNINGS=ON
+
+      - name: Build worldserver
+        run: cmake --build build --target worldserver -j"$(nproc)"
+
+      - name: Compiler cache statistics
+        if: always()
+        run: ccache --show-stats
