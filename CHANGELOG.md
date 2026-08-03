@@ -8,6 +8,7 @@ Semantic Versioning.
 ### Fixed
 
 - Corrected the clean-build workflow's AzerothCore `APPS_BUILD` value from `worldserver` to `world-only`.
+- Updated the official checkout and compiler-cache actions to their current Node.js 24 releases.
 
 ## [1.0.0] - 2026-08-03
 
