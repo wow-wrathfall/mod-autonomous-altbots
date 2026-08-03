@@ -8,7 +8,7 @@ character progression without their owner being logged in or nearby.
 
 ## Status
 
-Version **1.0.0** is an initial public release. It has been compiled successfully against:
+Version **1.0.1** is the current public release. It has been compiled successfully against:
 
 - `mod-playerbots/azerothcore-wotlk`, branch `Playerbot`
 - `mod-playerbots/mod-playerbots`, branch `master`

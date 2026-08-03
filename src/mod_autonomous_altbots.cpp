@@ -34,7 +34,7 @@ using namespace Acore::ChatCommands;
 namespace
 {
 constexpr char SETTING_SOURCE[] = "mod_autonomous_altbots";
-constexpr char MODULE_VERSION[] = "1.0.0";
+constexpr char MODULE_VERSION[] = "1.0.1";
 constexpr uint32 SETTING_ENABLED = 0;
 constexpr uint32 STOP_WATCH_DURATION_MS = 30000;
 

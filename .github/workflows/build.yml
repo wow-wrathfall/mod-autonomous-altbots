@@ -72,7 +72,7 @@ jobs:
             -DSCRIPTS=static \
             -DMODULES=static \
             -DTOOLS_BUILD=none \
-            -DAPPS_BUILD=worldserver \
+            -DAPPS_BUILD=world-only \
             -DCMAKE_C_COMPILER_LAUNCHER=ccache \
             -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
             -DWITH_WARNINGS=ON

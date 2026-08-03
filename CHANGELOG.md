@@ -3,6 +3,12 @@
 All notable changes to this project are documented here. The format follows Keep a Changelog and the project uses
 Semantic Versioning.
 
+## [1.0.1] - 2026-08-03
+
+### Fixed
+
+- Corrected the clean-build workflow's AzerothCore `APPS_BUILD` value from `worldserver` to `world-only`.
+
 ## [1.0.0] - 2026-08-03
 
 ### Added
