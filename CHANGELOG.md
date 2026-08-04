@@ -3,6 +3,12 @@
 All notable changes to this project are documented here. The format follows Keep a Changelog and the project uses
 Semantic Versioning.
 
+## [Unreleased]
+
+### Changed
+
+- Made `.autoalt` the primary command namespace while retaining `.autonomousalt` as a backward-compatible alias.
+
 ## [1.0.1] - 2026-08-03
 
 ### Fixed

@@ -326,6 +326,7 @@ public:
         };
         static ChatCommandTable commandTable =
         {
+            { "autoalt", autonomousAltCommandTable },
             { "autonomousalt", autonomousAltCommandTable },
         };
         return commandTable;

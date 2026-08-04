@@ -91,13 +91,16 @@ Commands require AzerothCore's GM command permission.
 
 | Command | Effect |
 |---|---|
-| `.autonomousalt start <character>` | Persistently enable the character and log it in. |
-| `.autonomousalt stop <character>` | Log the character out and keep it offline. |
-| `.autonomousalt enable <character>` | Alias for `start`. |
-| `.autonomousalt disable <character>` | Alias for `stop`. |
-| `.autonomousalt status <character>` | Show desired and current online state. |
-| `.autonomousalt list` | List every enabled autonomous alt. |
-| `.autonomousalt reload` | Reload selections from `character_settings`. |
+| `.autoalt start <character>` | Persistently enable the character and log it in. |
+| `.autoalt stop <character>` | Log the character out and keep it offline. |
+| `.autoalt enable <character>` | Alias for `start`. |
+| `.autoalt disable <character>` | Alias for `stop`. |
+| `.autoalt status <character>` | Show desired and current online state. |
+| `.autoalt list` | List every enabled autonomous alt. |
+| `.autoalt reload` | Reload selections from `character_settings`. |
+
+The original `.autonomousalt` namespace remains available as a backward-compatible alias. Use the complete `.autoalt`
+name rather than a shorter abbreviation because AzerothCore also provides an `.autobroadcast` command.
 
 A character logged in through the game client must log out before it can be enabled. An already running ordinary altbot
 may be enabled; after its current master-owned session ends, the module logs it back in independently.

@@ -7,7 +7,8 @@ The desired state is a single per-character flag in AzerothCore's existing `char
 - source: `mod_autonomous_altbots`
 - index `0`: `1` enabled, `0` disabled
 
-The in-memory GUID set is rebuilt at world startup and can be refreshed with `.autonomousalt reload`.
+The in-memory GUID set is rebuilt at world startup and can be refreshed with `.autoalt reload`. The original
+`.autonomousalt` namespace is retained as a backward-compatible alias.
 
 ## Login lifecycle
 

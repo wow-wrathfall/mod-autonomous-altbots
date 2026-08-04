@@ -1,6 +1,6 @@
 # Prior-art and duplicate-project search
 
-Search performed on 2026-08-03 across the AzerothCore module catalogue/web results, GitHub repository and code-oriented
+Search performed on 2026-08-04 across the AzerothCore module catalogue/web results, GitHub repository and code-oriented
 queries, the current `mod-playerbots` repository/configuration/wiki, and the CMaNGOS Playerbots lineage.
 
 ## Findings
@@ -37,8 +37,10 @@ from the current AzerothCore Playerbots source and active configuration reviewed
 
 ### Name collision
 
-No repository or indexed code result was found using `mod-autonomous-altbots`, `mod_autonomous_altbots`, or the
-`.autonomousalt` command namespace at the time of the search.
+No other repository or indexed code result was found using `mod-autonomous-altbots`, `mod_autonomous_altbots`,
+`.autoalt`, or the `.autonomousalt` command namespace at the time of the search. AzerothCore's `.autobroadcast` command
+shares the `auto` prefix, but exact command tokens take precedence; the documentation therefore avoids shorter
+abbreviations.
 
 ## Conclusion
 
