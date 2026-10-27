@@ -1,7 +1,16 @@
 diff --git a/src/Bot/PlayerbotAI.cpp b/src/Bot/PlayerbotAI.cpp
+index 76694bb..81a3273 100644
 --- a/src/Bot/PlayerbotAI.cpp
 +++ b/src/Bot/PlayerbotAI.cpp
-@@ -65,6 +65,7 @@ namespace
+@@ -35,6 +35,7 @@
+ #include "PerfMonitor.h"
+ #include "Player.h"
+ #include "PlayerbotAIConfig.h"
++#include "Config.h"
+ #include "PlayerbotGuildMgr.h"
+ #include "PlayerbotMgr.h"
+ #include "PlayerbotTextMgr.h"
+@@ -65,6 +66,7 @@ namespace
  constexpr uint32 SPELL_TITAN_GRIP = 49152;
  constexpr uint32 SPELL_DK_FROST_PRESENCE = 48263;
  constexpr uint32 SPELL_GRAVITY_LAPSE_TK = 39432;
@@ -9,7 +18,21 @@ diff --git a/src/Bot/PlayerbotAI.cpp b/src/Bot/PlayerbotAI.cpp
  constexpr uint32 SPELL_GRAVITY_LAPSE_MGT = 44226;
  constexpr uint32 VEHICLE_FLAG_FIXED_POSITION = 0x00200000;
  }
-@@ -4727,6 +4728,10 @@ bool PlayerbotAI::AllowActive(ActivityType activityType)
+@@ -483,6 +485,13 @@ void PlayerbotAI::UpdateAIGroupMaster()
+     if (!bot)
+         return;
+ 
++    // An independent autonomous alt must not reacquire the party leader as
++    // master. The autonomous module would clear that master on its next check,
++    // causing the normal follow greeting to be whispered again and again.
++    if (bot->IsPlayerSettingEnabled(AUTONOMOUS_ALT_SETTING_SOURCE, 0) &&
++        sConfigMgr->GetOption<bool>("AutonomousAltBots.Independent", true))
++        return;
++
+     PlayerbotAI* botAI = GET_PLAYERBOT_AI(bot);
+     if (!botAI)
+         return;
+@@ -4728,6 +4737,10 @@ bool PlayerbotAI::AllowActive(ActivityType activityType)
      if (activityType == PACKET_ACTIVITY)
          return true;
  
@@ -21,9 +44,10 @@ diff --git a/src/Bot/PlayerbotAI.cpp b/src/Bot/PlayerbotAI.cpp
      if (sPlayerbotAIConfig.BotActiveAlone >= 100 && !sPlayerbotAIConfig.BotActiveAloneSmartScale)
          return true;
 diff --git a/src/Bot/RandomPlayerbotMgr.cpp b/src/Bot/RandomPlayerbotMgr.cpp
+index 2e63d35..91c8a8e 100644
 --- a/src/Bot/RandomPlayerbotMgr.cpp
 +++ b/src/Bot/RandomPlayerbotMgr.cpp
-@@ -58,6 +58,8 @@ struct GuidClassRaceInfo
+@@ -57,6 +57,8 @@ struct GuidClassRaceInfo
      uint32 rRace;
  };
  
@@ -32,7 +56,7 @@ diff --git a/src/Bot/RandomPlayerbotMgr.cpp b/src/Bot/RandomPlayerbotMgr.cpp
  void PrintStatsThread() { sRandomPlayerbotMgr.PrintStats(); }
  
  void activatePrintStatsThread()
-@@ -2692,6 +2694,8 @@ void RandomPlayerbotMgr::OnPlayerLogout(Player* player)
+@@ -2691,6 +2693,8 @@ void RandomPlayerbotMgr::OnPlayerLogout(Player* player)
  
  void RandomPlayerbotMgr::OnBotLoginInternal(Player* const bot)
  {
@@ -41,7 +65,7 @@ diff --git a/src/Bot/RandomPlayerbotMgr.cpp b/src/Bot/RandomPlayerbotMgr.cpp
      if (_isBotLogging)
      {
          LOG_INFO("playerbots", "{}/{} Bot {} logged in", playerBots.size(),
-@@ -2705,7 +2709,7 @@ void RandomPlayerbotMgr::OnBotLoginInternal(Player* const bot)
+@@ -2703,7 +2707,7 @@ void RandomPlayerbotMgr::OnBotLoginInternal(Player* const bot)
      }
  
      // Run guild recovery/assignment at login to handle empty guild tables after restart.
@@ -50,7 +74,7 @@ diff --git a/src/Bot/RandomPlayerbotMgr.cpp b/src/Bot/RandomPlayerbotMgr.cpp
      {
          PlayerbotFactory factory(bot, bot->GetLevel());
          factory.InitGuild();
-@@ -2713,12 +2717,15 @@ void RandomPlayerbotMgr::OnBotLoginInternal(Player* const bot)
+@@ -2711,13 +2715,16 @@ void RandomPlayerbotMgr::OnBotLoginInternal(Player* const bot)
  
      RandomPlayerbotFactory::AssignBotToArenaTeam(bot);
  
@@ -72,7 +96,8 @@ diff --git a/src/Bot/RandomPlayerbotMgr.cpp b/src/Bot/RandomPlayerbotMgr.cpp
 +        }
      }
  }
-@@ -2802,6 +2809,7 @@ void RandomPlayerbotMgr::OnPlayerLogin(Player* player)
+ 
+@@ -2801,13 +2808,14 @@ void RandomPlayerbotMgr::OnPlayerLogin(Player* player)
          // player->Relocate(botPos.getX(), botPos.getY(), botPos.getZ(), botPos.getO());
      }
  
@@ -80,7 +105,6 @@ diff --git a/src/Bot/RandomPlayerbotMgr.cpp b/src/Bot/RandomPlayerbotMgr.cpp
      if (IsRandomBot(player))
      {
          // ObjectGuid::LowType guid = player->GetGUID().GetCounter(); //not used, conditional could be rewritten for
-@@ -2809,7 +2817,7 @@ void RandomPlayerbotMgr::OnPlayerLogin(Player* player)
          // simplicity. line marked for removal.
          player->SetPvP(sWorld->IsPvPRealm());
      }
