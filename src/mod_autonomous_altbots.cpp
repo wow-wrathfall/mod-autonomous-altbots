@@ -119,13 +119,13 @@ bool IsPlayerbot(Player* player)
         return false;
 
     PlayerbotAI* botAI = GET_PLAYERBOT_AI(player);
-    return botAI && !botAI->IsRealPlayer();
+    return botAI != nullptr;
 }
 
 void ApplyAutonomousStrategies(Player* bot)
 {
     PlayerbotAI* botAI = GET_PLAYERBOT_AI(bot);
-    if (!botAI || botAI->IsRealPlayer())
+    if (!botAI)
         return;
 
     bot->UpdatePlayerSetting(SETTING_SOURCE, SETTING_ENABLED, 1);
