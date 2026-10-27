@@ -21,6 +21,13 @@ The release therefore carries two narrow patches:
 
 Nearby revisions may apply cleanly. Always run the installer in check mode after pulling upstream.
 
+## Verified newer Windows baseline
+
+- AzerothCore Playerbots fork: `3f2969ddb0da42b48b4fca050c02b19163ba1e20`
+- mod-playerbots: `e88cc4099e69f35126b28942a412ca702d20453b`
+
+The `mod-playerbots.patch` file has been refreshed for this baseline. The AzerothCore patch applies unchanged.
+
 ## Check, apply, or reverse
 
 From the AzerothCore root:
